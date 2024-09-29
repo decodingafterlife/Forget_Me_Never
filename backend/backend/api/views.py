@@ -1,15 +1,23 @@
 # views.py
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.throttling import UserRateThrottle
 from .models import Bookmark
 from .serializers import BookmarkSerializer
 from .services import generate_bookmark_description
+from .pagination import CustomPageNumberPagination
 
 class BookmarkViewSet(viewsets.ModelViewSet):
     serializer_class = BookmarkSerializer
     permission_classes = [IsAuthenticated] 
+
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['url', 'description']
+    throttle_classes = [UserRateThrottle]
+    ordering_fields=['url']
+    pagination_class = CustomPageNumberPagination
 
     
     def get_queryset(self):
@@ -21,9 +29,11 @@ class BookmarkViewSet(viewsets.ModelViewSet):
         
         if not url:
             return Response({"error": "URL is required."}, status=status.HTTP_400_BAD_REQUEST)
+        
+        description = request.data.get('description')
 
-        # Generate the description using the LLaMA model
-        description = generate_bookmark_description(url)
+        if  description is None:
+            description = generate_bookmark_description(url)
 
         data = {
             'url': url,
