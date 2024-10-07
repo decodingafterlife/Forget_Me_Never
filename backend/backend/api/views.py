@@ -9,6 +9,7 @@ from .serializers import BookmarkSerializer
 from .services import generate_bookmark_description
 from .pagination import CustomPageNumberPagination
 
+
 class BookmarkViewSet(viewsets.ModelViewSet):
     serializer_class = BookmarkSerializer
     permission_classes = [IsAuthenticated] 
