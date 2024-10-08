@@ -31,10 +31,12 @@ class BookmarkViewSet(viewsets.ModelViewSet):
         if not url:
             return Response({"error": "URL is required."}, status=status.HTTP_400_BAD_REQUEST)
         
-        # description = request.data.get('description')
+        description = request.data.get('description')
+        print(type(description))
+        print("desc", description)
 
-        # if  description is None:
-        description = generate_bookmark_description(url)
+        if  not description:
+            description = generate_bookmark_description(url)
 
         data = {
             'url': url,
