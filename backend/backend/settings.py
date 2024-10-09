@@ -93,8 +93,18 @@ DATABASES = {
         'PASSWORD': os.getenv('DATABASE_PASSWORD'),
         'HOST': os.getenv('DATABASE_HOST'),
         'PORT': os.getenv('DATABASE_PORT'),
-    }
+        'OPTIONS': {
+            "init_command": "SET foreign_key_checks = 0;",
+        },
+    },
 }
+
+
+
+MEDIA_URL = '/media/' 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_USER_MODEL = 'api.CustomUser' 
 
 
 # Password validation
@@ -139,9 +149,9 @@ STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.mail.yahoo.com'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = os.getenv('EMAIL_PORT')
-EMAIL_USE_TLS = True  
+EMAIL_USE_TLS = True 
 EMAIL_USE_SSL = False 
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
@@ -179,15 +189,16 @@ DJOSER = {
 
     'LOGIN_FIELD': 'username', 
     'TOKEN_MODEL': None, 
+    'PASSWORD_RESET_CONFIRM_RETYPE': True,
+    'USERNAME_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
     'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}/',
-    # 'SEND_ACTIVATION_EMAIL': True,
-    # 'SEND_CONFIRMATION_EMAIL': False,
-    # 'ACTIVATION_URL': 'password/activation/'
-    # 'PASSWORD_RESET_SHOW_EMAIL_NOT_FOUND': True,
+    'SEND_ACTIVATION_EMAIL': True,
+    'ACTIVATION_URL': 'password/activation/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}/',
     'SERIALIZERS': {
-        'user_create': 'djoser.serializers.UserCreateSerializer',
-        'user': 'djoser.serializers.UserSerializer',
-        'current_user': 'djoser.serializers.UserSerializer',
+        'user_create': 'api.serializers.CustomUserCreateSerializer',
+        'user': 'api.serializers.CustomUserSerializer',
+        'current_user': 'api.serializers.CustomUserSerializer',
     }
 }
 
